@@ -82,12 +82,14 @@ function profileInfo(object){
 
 //////////////////////////////////////////////////////////////////////////////
 function maybeNoises(object){
-    if(object.hasOwnProperty('noises') && object.noises.length > 0){
+    if(object.noises && object.noises.length > 0){
         return object.noises.join(' ');
     }else{
         return 'there are no noises'
     }   
+    
 }
+ 
 
 
 
