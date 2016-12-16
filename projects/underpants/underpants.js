@@ -28,7 +28,7 @@ window._ = {};
 
 _.identity  = function (anything) {
     return anything;
-}
+};
 
 
 
@@ -89,11 +89,9 @@ _.first = function (arr, num) {
         return arr[0];
     } else if (num > arr.length) {
         return arr;
+    }else {
+        return arr.slice(0,num);
     }
-    
-    else {
-    return arr.slice(0,num);
-}
 };
 
 /** _.last()
@@ -156,12 +154,12 @@ _.each = function (coll, func) {
            func(coll[i], i, coll);
         } 
     
-    } else if (_.typeOf(coll) === "object") {
+
+    } else{
         for (var key in coll){
             func(coll[key], key, coll);
         }
     }
-
 };
 
 
@@ -188,7 +186,7 @@ _.indexOf = function (arr, val){
         } 
     } 
     return -1;
-}
+};
 
 
 /** _.filter()
@@ -217,7 +215,7 @@ _.filter = function(array,test){
         }
     });
     return results;
-}
+};
 
 
 /** _.reject()
@@ -238,7 +236,7 @@ _.reject = function(array,test){
     return _.filter(array,function(val,ind,coll){
         return !test(val,ind,coll);
     });
-}
+};
 
 
 /** _.partition()
@@ -260,12 +258,10 @@ _.reject = function(array,test){
 }
 */
 _.partition = function(arr,func){
-    var array = [];
-    array[0]=(_.filter(arr,func));
-    array[1]=(_.reject(arr,func));
-    return array;
+    return  [_.filter(arr,func),_.reject(arr,func)];
     
-}
+    
+};
 
 /** _.unique()
 * Arguments:
@@ -276,6 +272,20 @@ _.partition = function(arr,func){
 * Examples:
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
+
+
+_.unique= function(arr){
+   var array = [];
+    return _.filter(arr,function (val,ind,coll) {
+          if(_.indexOf(array,val)==-1){
+              array.push(val);
+              return true;
+          }else{
+              return false;
+          }
+    }); 
+  
+};
 
 
 /** _.map()
@@ -294,6 +304,15 @@ _.partition = function(arr,func){
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
 
+_.map = function (coll,func){
+    let results = [];
+    _.each(coll,function(val, ind, coll){
+        
+            results.push(func(val,ind,coll));
+        
+    });
+    return results;
+};
 
 /** _.pluck()
 * Arguments:
@@ -305,7 +324,11 @@ _.partition = function(arr,func){
 * Examples:
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
-
+_.pluck= function (arr, prop){
+   return  _.map(arr, function(el,ind,col) {
+        return el[prop];
+    });
+};
 
 /** _.contains()
 * Arguments:
@@ -321,6 +344,10 @@ _.partition = function(arr,func){
 * Examples:
 *   _.contains([1,"two", 3.14], "two") -> true
 */
+
+_.contains = function(arr,val){
+    return ((_.indexOf(arr,val)>=0) ? true: false); 
+};
 
 
 /** _.every()
@@ -343,7 +370,23 @@ _.partition = function(arr,func){
 *   _.every([2,4,6], function(e){return e % 2 === 0}) -> true
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
-
+_.every= function(coll,func){
+    var bool = true; 
+    if(_.typeOf(func)=='function'){
+        _.each(coll, function (el,ind,col){
+                if(!func(el,ind,col)){
+                    bool = false;
+                }     
+            });
+    }else{
+        _.each(coll, function(el,ind,col){
+            if(!el){
+                bool = false;
+            }
+        });
+    }    
+    return bool;
+};
 
 /** _.some()
 * Arguments:
@@ -365,7 +408,24 @@ _.partition = function(arr,func){
 *   _.some([1,3,5], function(e){return e % 2 === 0}) -> false
 *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
 */
-
+_.some=function(coll,func){
+   var bool = false; 
+    if(_.typeOf(func)=='function'){
+        _.each(coll, function (el,ind,col){
+                if(func(el,ind,col)){
+                    bool = true;
+                }     
+            });
+    }else{
+        _.each(coll, function(el,ind,col){
+            if(el){
+                bool = true;
+            }
+        });
+    }    
+    return bool;
+    
+};
 
 /** _.reduce()
 * Arguments:
@@ -385,7 +445,69 @@ _.partition = function(arr,func){
 * Examples:
 *   _.reduce([1,2,3], function(prev, curr){ return prev + curr}) -> 6
 */
+// _.reduce= function(arr,func,seed){
+//   var prev;    
+//   var finale;
+//   if(_.typeOf(seed)=='number'){
+//       prev = seed;
+//       _.each(arr, function(el, ind, coll) {
+//             if(ind == coll.length-1){
+//                     finale = func(prev,el,ind);
+//             }else{
+//                 prev = func(prev, el,ind);
+//             }
+//         });
+//         return finale;
+//   }else{
+//           prev = arr[0];
+//           _.each(arr, function(el, ind, coll) {
+//             if(ind>0){
+//                 if(ind == coll.length-1){
+//                         finale = func(prev,el,ind);
+//                 }else{
+//                     prev = func(prev, el,ind);
+//                 }
+//             }    
+//         });
+//         return finale;
+//   }
+// };
 
+_.reduce= function(array,combine,seed){
+    //create an ouput container, or something to which we'll write the summary
+    //if seed, assign to combined
+    // if seed isn't defined, assign combined to first value in array
+    // AND not double down on first value
+    //loop array and combine
+    //return combined
+        let combined = seed;
+        let i = 0;
+    if(combined===undefined){
+        combined= array[0];
+        i=1;
+    }
+    for(;i<array.length;i++){
+        combined = combine(combined, array[i],i,array);
+    }
+    return combined;
+    
+};
+
+
+
+// _.reduce= function(arr,func,seed){
+  
+//   var prev =((_.typeOf(seed)=='number') ? seed : 1);
+//   var finale;
+//   _.each(arr, function(val, ind, coll) {
+//         if(ind == coll.length-1){
+//                 finale = func(prev,val,ind);
+//         }else{
+//             prev = func(prev, val,ind);
+//         }
+//     });
+//     return finale;
+// };
 
 /** _.extend()
 * Arguments:
@@ -401,7 +523,20 @@ _.partition = function(arr,func){
 *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
 *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
 */
+_.extend = function (ob1,ob2){
+  _.each(arguments, function(val,ind,coll){
+    _.each(val,function(val,ind,coll){
+         ob1[ind]=val;
+     });   
 
-
+    });
+    return ob1;
+};
+// _.reduce(arguments,function(val,ind,coll){
+//     _.each(val,function(val,ind,coll){
+//         ob1[ind]=val;
+//     });
+// },ob1);
+// };
 // This is the proper way to end a javascript library
 }());
