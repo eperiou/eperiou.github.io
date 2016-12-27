@@ -8,8 +8,7 @@
 
 // This allows us to use our "_" anywhere. In a web browser, properties of window
 // are available everywhere without having to type "window."
-/* global _ */
-window._ = {};
+/* global _ */window._ = {};
 
 /**
 * START OF OUR LIBRARY!
@@ -326,7 +325,9 @@ _.map = function (coll,func){
 */
 _.pluck= function (arr, prop){
    return  _.map(arr, function(el,ind,col) {
+        if(prop in el){
         return el[prop];
+        }
     });
 };
 
