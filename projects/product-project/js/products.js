@@ -89,7 +89,7 @@ $('#search-button').on('click', function(){
                     $("#"+product.id+"-modal").modal();
                 });
              
-              row.appendTo('main');
+              row.appendTo('main')
               $('<div>').text('Price: $'+product.price).appendTo(mainDesc).css('font-size','12px');
                     if(product.stock < 10){
                         $('<section>').text("Only "+product.stock+" left in-stock!!! BUY IT NOW").css('color','red').css('font-size','25px').appendTo(mainDesc);
